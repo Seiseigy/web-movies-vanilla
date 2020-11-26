@@ -10,14 +10,21 @@ async function getResults(searchTerm) {
     const url = `${API}${searchTerm}`;
     const response = await fetch(url);
     const data = await response.json();
+    if(data.Error) {
+        throw new Error(data.Error);
+    }
     return data.Search;
 };
 
 async function submittedForm(event) {
     event.preventDefault();
     const searchTerm = input.value;
-    const results = await getResults(searchTerm)
-    showResults(results);
+    try {
+        const results = await getResults(searchTerm)
+        showResults(results);
+    } catch(error) {
+        showError(error);
+    }
 };
 
 function showResults(results) {
@@ -34,6 +41,13 @@ function showResults(results) {
     } ,'');
 };
 
-
+function showError(error) {
+    console.log(error);
+    resultsSection.innerHTML = `
+    <div class="alert alert-dismissible alert-danger col mt-5">
+        ${error}
+    </div>
+    `;
+}
 
 
